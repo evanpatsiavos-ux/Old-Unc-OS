@@ -22,17 +22,23 @@ jobs:
           sudo apt-get update -y
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             live-build debootstrap debian-archive-keyring debian-keyring squashfs-tools xorriso isolinux syslinux-efi \
-            grub-pc-bin grub-efi-amd64-bin mtools curl wget git ca-certificates
+            grub-pc-bin grub-efi-amd64-bin mtools curl wget git ca-certificates genisoimage
 
       - name: Assemble Live-Build Workspace & Filesystem Overlay
         run: |
           mkdir -p live-build-workspace
           cd live-build-workspace
 
-          # Configure Debian 12 Bookworm
+          # Configure Debian 12 Bookworm with explicit Debian mirrors
           sudo lb config \
             --distribution bookworm \
             --archive-areas "main contrib non-free non-free-firmware" \
+            --parent-mirror-bootstrap http://deb.debian.org/debian/ \
+            --parent-mirror-chroot http://deb.debian.org/debian/ \
+            --parent-mirror-binary http://deb.debian.org/debian/ \
+            --mirror-bootstrap http://deb.debian.org/debian/ \
+            --mirror-chroot http://deb.debian.org/debian/ \
+            --mirror-binary http://deb.debian.org/debian/ \
             --architectures amd64 \
             --binary-images iso-hybrid \
             --bootloader syslinux \
@@ -243,6 +249,7 @@ jobs:
           sudo tee config/hooks/live/99-setup.chroot << 'EOF'
           #!/bin/sh
           set -e
+          export DEBIAN_FRONTEND=noninteractive
           dpkg --add-architecture i386 || true
           apt-get update -y || true
           apt-get install -y --no-install-recommends wine32:i386 || true
@@ -269,15 +276,16 @@ jobs:
         run: |
           cd live-build-workspace
           sudo lb build
-          if [ -f live-image-amd64.hybrid.iso ]; then
-            mv live-image-amd64.hybrid.iso ../os-installer.iso
-          elif [ -f live-image-amd64.iso ]; then
-            mv live-image-amd64.iso ../os-installer.iso
-          fi
+
+      - name: Locate and Prepare Artifact
+        run: |
+          mkdir -p build-artifact
+          find . -maxdepth 3 -name "*.iso" -exec cp {} build-artifact/os-installer.iso \;
+          ls -lah build-artifact/
 
       - name: Upload ISO for Download
         uses: actions/upload-artifact@v4
         with:
           name: DadOS-Windows-XP-ISO
-          path: os-installer.iso
+          path: build-artifact/os-installer.iso
           retention-days: 7
