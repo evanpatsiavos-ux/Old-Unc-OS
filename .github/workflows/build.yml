@@ -21,7 +21,7 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            live-build debootstrap squashfs-tools xorriso isolinux syslinux-efi \
+            live-build debootstrap debian-archive-keyring debian-keyring squashfs-tools xorriso isolinux syslinux-efi \
             grub-pc-bin grub-efi-amd64-bin mtools curl wget git ca-certificates
 
       - name: Assemble Live-Build Workspace & Filesystem Overlay
@@ -35,7 +35,7 @@ jobs:
             --archive-areas "main contrib non-free non-free-firmware" \
             --architectures amd64 \
             --binary-images iso-hybrid \
-            --bootloaders "syslinux,grub-efi" \
+            --bootloader syslinux \
             --memtest none \
             --iso-application "Dad's OS Windows XP Edition" \
             --iso-publisher "Son's Tech Lab" \
