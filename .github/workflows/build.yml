@@ -28,11 +28,13 @@ jobs:
             apt-get update
             apt-get install -y --no-install-recommends \
               live-build debootstrap squashfs-tools xorriso isolinux syslinux-efi \
-              grub-pc-bin grub-efi-amd64-bin mtools curl wget git ca-certificates
+              grub-pc-bin grub-efi-amd64-bin mtools curl wget git ca-certificates \
+              apt-utils dosfstools
 
             mkdir -p /workspace/live-build-workspace
             cd /workspace/live-build-workspace
 
+            # Configure for BOTH UEFI and Legacy MBR/BIOS
             lb config \
               --distribution bookworm \
               --archive-areas "main contrib non-free non-free-firmware" \
@@ -46,9 +48,6 @@ jobs:
               --system live
 
             mkdir -p config/package-lists
-            printf "%s\n" "grub-pc" "grub-pc-bin" > config/package-lists/grub-pc.list.binary
-            printf "%s\n" "grub-efi-amd64" "grub-efi-amd64-bin" > config/package-lists/grub-efi.list.binary
-
             printf "%s\n" \
               "linux-image-amd64" \
               "intel-microcode" \
@@ -167,9 +166,10 @@ jobs:
       - name: Publish High-Speed Direct ISO Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: latest
-          name: "Dad's OS (Windows XP Edition) Direct ISO"
-          body: "High-speed direct download link for Dad's OS. Supports both UEFI and Legacy MBR/BIOS."
+          tag_name: v${{ github.run_number }}
+          name: "Dad's OS (Windows XP Edition) Build #${{ github.run_number }}"
+          body: "High-speed direct download for Dad's OS. Fully supports both modern UEFI and classic Legacy MBR/BIOS."
           files: os-installer.iso
+          make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
