@@ -33,7 +33,6 @@ jobs:
             mkdir -p /workspace/live-build-workspace
             cd /workspace/live-build-workspace
 
-            # Configure for BOTH UEFI and Legacy MBR/BIOS
             lb config \
               --distribution bookworm \
               --archive-areas "main contrib non-free non-free-firmware" \
@@ -46,54 +45,51 @@ jobs:
               --linux-flavours amd64 \
               --system live
 
-            # Inject packages for both chroot and binary bootloaders
             mkdir -p config/package-lists
-            echo -e "grub-pc\ngrub-pc-bin" > config/package-lists/grub-pc.list.binary
-            echo -e "grub-efi-amd64\ngrub-efi-amd64-bin" > config/package-lists/grub-efi.list.binary
+            printf "%s\n" "grub-pc" "grub-pc-bin" > config/package-lists/grub-pc.list.binary
+            printf "%s\n" "grub-efi-amd64" "grub-efi-amd64-bin" > config/package-lists/grub-efi.list.binary
 
-            cat << "EOF" > config/package-lists/dados.list.chroot
-            linux-image-amd64
-            intel-microcode
-            firmware-misc-nonfree
-            firmware-realtek
-            firmware-atheros
-            firmware-iwlwifi
-            libgl1-mesa-dri
-            libglx-mesa0
-            xserver-xorg-core
-            xserver-xorg-video-all
-            calamares
-            calamares-settings-debian
-            grub-pc
-            grub-efi-amd64-signed
-            shim-signed
-            plymouth
-            plymouth-themes
-            xfce4
-            xfce4-goodies
-            xfce4-whiskermenu-plugin
-            xfce4-pulseaudio-plugin
-            thunar
-            lightdm
-            lightdm-gtk-greeter
-            network-manager-gnome
-            pavucontrol
-            pulseaudio
-            gnome-software
-            gnome-software-plugin-flatpak
-            flatpak
-            firefox-esr
-            libreoffice-writer
-            libreoffice-calc
-            libreoffice-gtk3
-            vlc
-            preload
-            wine
-            wine64
-            fonts-wine
-            EOF
+            printf "%s\n" \
+              "linux-image-amd64" \
+              "intel-microcode" \
+              "firmware-misc-nonfree" \
+              "firmware-realtek" \
+              "firmware-atheros" \
+              "firmware-iwlwifi" \
+              "libgl1-mesa-dri" \
+              "libglx-mesa0" \
+              "xserver-xorg-core" \
+              "xserver-xorg-video-all" \
+              "calamares" \
+              "calamares-settings-debian" \
+              "grub-pc" \
+              "grub-efi-amd64-signed" \
+              "shim-signed" \
+              "plymouth" \
+              "plymouth-themes" \
+              "xfce4" \
+              "xfce4-goodies" \
+              "xfce4-whiskermenu-plugin" \
+              "xfce4-pulseaudio-plugin" \
+              "thunar" \
+              "lightdm" \
+              "lightdm-gtk-greeter" \
+              "network-manager-gnome" \
+              "pavucontrol" \
+              "pulseaudio" \
+              "gnome-software" \
+              "gnome-software-plugin-flatpak" \
+              "flatpak" \
+              "firefox-esr" \
+              "libreoffice-writer" \
+              "libreoffice-calc" \
+              "libreoffice-gtk3" \
+              "vlc" \
+              "preload" \
+              "wine" \
+              "wine64" \
+              "fonts-wine" > config/package-lists/dados.list.chroot
 
-            # Setup Overlays
             mkdir -p config/includes.chroot/etc/sysctl.d \
                      config/includes.chroot/etc/polkit-1/rules.d \
                      config/includes.chroot/etc/firefox-esr/policies \
@@ -109,132 +105,62 @@ jobs:
                      config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml \
                      config/includes.chroot/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml
 
-            # 1. Download Theme, Icons, and Bliss directly into filesystem
-            curl -fsSL -o config/includes.chroot/usr/share/backgrounds/bliss.jpg "https://upload.wikimedia.org/wikipedia/en/2/27/Bliss_%28Windows_XP%29.png"
-            cp config/includes.chroot/usr/share/backgrounds/bliss.jpg config/includes.chroot/usr/share/images/desktop-base/default
+            curl -fsSL -o config/includes.chroot/usr/share/backgrounds/bliss.jpg "https://upload.wikimedia.org/wikipedia/en/2/27/Bliss_%28Windows_XP%29.png" || true
+            cp config/includes.chroot/usr/share/backgrounds/bliss.jpg config/includes.chroot/usr/share/images/desktop-base/default || true
 
-            git clone --depth 1 https://github.com/B00merang-Project/Windows-XP.git config/includes.chroot/usr/share/themes/Windows-XP-Luna
-            git clone --depth 1 https://github.com/B00merang-Artwork/Windows-XP.git config/includes.chroot/usr/share/icons/Windows-XP
+            git clone --depth 1 https://github.com/B00merang-Project/Windows-XP.git config/includes.chroot/usr/share/themes/Windows-XP-Luna || true
+            git clone --depth 1 https://github.com/B00merang-Artwork/Windows-XP.git config/includes.chroot/usr/share/icons/Windows-XP || true
 
-            # 2. XFCE Global Configuration: Force Windows-XP-Luna Theme & Bliss
-            cat << "EOF" > config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
-            <?xml version="1.0" encoding="UTF-8"?>
-            <channel name="xsettings" version="1.0">
-              <property name="Net" type="empty">
-                <property name="ThemeName" type="string" value="Windows-XP-Luna"/>
-                <property name="IconThemeName" type="string" value="Windows-XP"/>
-              </property>
-              <property name="Gtk" type="empty">
-                <property name="FontName" type="string" value="Liberation Sans 9"/>
-                <property name="CursorThemeName" type="string" value="DMZ-White"/>
-              </property>
-            </channel>
-            EOF
-            cp config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml config/includes.chroot/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
+            printf "%s\n" \
+              "vm.swappiness = 10" \
+              "vm.vfs_cache_pressure = 50" > config/includes.chroot/etc/sysctl.d/99-sysctl.conf
 
-            cat << "EOF" > config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml
-            <?xml version="1.0" encoding="UTF-8"?>
-            <channel name="xfwm4" version="1.0">
-              <property name="general" type="empty">
-                <property name="theme" type="string" value="Windows-XP-Luna"/>
-                <property name="button_layout" type="string" value="O|HMC"/>
-                <property name="title_alignment" type="string" value="left"/>
-              </property>
-            </channel>
-            EOF
-            cp config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml config/includes.chroot/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml
+            printf "%s\n" \
+              "polkit.addRule(function(action, subject) {" \
+              "    if (subject.local && subject.active) {" \
+              "        return polkit.Result.YES;" \
+              "    }" \
+              "});" > config/includes.chroot/etc/polkit-1/rules.d/49-dad-nopasswd.rules
 
-            cat << "EOF" > config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
-            <?xml version="1.0" encoding="UTF-8"?>
-            <channel name="xfce4-desktop" version="1.0">
-              <property name="backdrop" type="empty">
-                <property name="screen0" type="empty">
-                  <property name="monitor0" type="empty">
-                    <property name="workspace0" type="empty">
-                      <property name="color-style" type="int" value="0"/>
-                      <property name="image-style" type="int" value="5"/>
-                      <property name="last-image" type="string" value="/usr/share/backgrounds/bliss.jpg"/>
-                    </property>
-                  </property>
-                  <property name="monitordefault" type="empty">
-                    <property name="workspace0" type="empty">
-                      <property name="color-style" type="int" value="0"/>
-                      <property name="image-style" type="int" value="5"/>
-                      <property name="last-image" type="string" value="/usr/share/backgrounds/bliss.jpg"/>
-                    </property>
-                  </property>
-                </property>
-              </property>
-            </channel>
-            EOF
-            cp config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml config/includes.chroot/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
-
-            # 3. Sysctl for 16GB RAM + HDD
-            echo -e "vm.swappiness = 10\nvm.vfs_cache_pressure = 50" > config/includes.chroot/etc/sysctl.d/99-sysctl.conf
-
-            # 4. Polkit Zero-Password
-            cat << "EOF" > config/includes.chroot/etc/polkit-1/rules.d/49-dad-nopasswd.rules
-            polkit.addRule(function(action, subject) {
-                if (subject.local && subject.active) {
-                    if (action.id.indexOf("org.freedesktop.packagekit.") === 0 ||
-                        action.id.indexOf("org.debian.apt.") === 0 ||
-                        action.id.indexOf("org.freedesktop.flatpak.") === 0 ||
-                        action.id.indexOf("org.freedesktop.udisks2.") === 0 ||
-                        action.id.indexOf("org.freedesktop.login1.") === 0 ||
-                        action.id.indexOf("org.freedesktop.NetworkManager.") === 0) {
-                        return polkit.Result.YES;
-                    }
-                }
-            });
-            EOF
-
-            # 5. Wine OpenGL Launcher (Hardware Safe for Intel HD 3000)
-            cat << "EOF" > config/includes.chroot/usr/bin/wine-runner
-            #!/bin/sh
-            export WINE_D3D_CONFIG="renderer=gl,csmt=1,max_gl_version=3.3"
-            export WINEDLLOVERRIDES="dxgi=builtin;d3d11=builtin;d3d10core=builtin;d3d9=builtin"
-            case "$1" in
-                *.msi|*.MSI) exec wine msiexec /i "$@" ;;
-                *)           exec wine start /unix "$@" ;;
-            esac
-            EOF
+            printf "%s\n" \
+              "#!/bin/sh" \
+              "export WINE_D3D_CONFIG=\"renderer=gl,csmt=1,max_gl_version=3.3\"" \
+              "export WINEDLLOVERRIDES=\"dxgi=builtin;d3d11=builtin;d3d10core=builtin;d3d9=builtin\"" \
+              "case \"\$1\" in" \
+              "    *.msi|*.MSI) exec wine msiexec /i \"\$@\" ;;" \
+              "    *)           exec wine start /unix \"\$@\" ;;" \
+              "esac" > config/includes.chroot/usr/bin/wine-runner
             chmod +x config/includes.chroot/usr/bin/wine-runner
 
-            # 6. Hide Terminals from Start Menu
             for app in xfce4-terminal debian-xterm debian-uxterm; do
-              echo -e "[Desktop Entry]\nType=Application\nNoDisplay=true\nHidden=true" > config/includes.chroot/usr/share/applications/${app}.desktop
+              printf "%s\n" "[Desktop Entry]" "Type=Application" "NoDisplay=true" "Hidden=true" > config/includes.chroot/usr/share/applications/${app}.desktop
             done
 
-            # 7. Desktop Shortcuts
-            echo -e "[Desktop Entry]\nType=Application\nName=My Computer\nExec=thunar computer:///\nIcon=computer" > config/includes.chroot/etc/skel/Desktop/my-computer.desktop
-            echo -e "[Desktop Entry]\nType=Application\nName=My Documents\nExec=thunar Documents\nIcon=folder-documents" > config/includes.chroot/etc/skel/Desktop/my-documents.desktop
-            echo -e "[Desktop Entry]\nType=Application\nName=Recycle Bin\nExec=thunar trash:///\nIcon=user-trash" > config/includes.chroot/etc/skel/Desktop/recycle-bin.desktop
-            echo -e "[Desktop Entry]\nType=Application\nName=Remote Help (Call Son)\nExec=rustdesk\nIcon=preferences-desktop-remote-desktop" > config/includes.chroot/etc/skel/Desktop/remote-help.desktop
-            echo -e "[Desktop Entry]\nType=Application\nName=Software Store\nExec=gnome-software\nIcon=org.gnome.Software" > config/includes.chroot/etc/skel/Desktop/software-store.desktop
+            printf "%s\n" "[Desktop Entry]" "Type=Application" "Name=My Computer" "Exec=thunar computer:///" "Icon=computer" > config/includes.chroot/etc/skel/Desktop/my-computer.desktop
+            printf "%s\n" "[Desktop Entry]" "Type=Application" "Name=My Documents" "Exec=thunar Documents" "Icon=folder-documents" > config/includes.chroot/etc/skel/Desktop/my-documents.desktop
+            printf "%s\n" "[Desktop Entry]" "Type=Application" "Name=Recycle Bin" "Exec=thunar trash:///" "Icon=user-trash" > config/includes.chroot/etc/skel/Desktop/recycle-bin.desktop
+            printf "%s\n" "[Desktop Entry]" "Type=Application" "Name=Remote Help (Call Son)" "Exec=rustdesk" "Icon=preferences-desktop-remote-desktop" > config/includes.chroot/etc/skel/Desktop/remote-help.desktop
+            printf "%s\n" "[Desktop Entry]" "Type=Application" "Name=Software Store" "Exec=gnome-software" "Icon=org.gnome.Software" > config/includes.chroot/etc/skel/Desktop/software-store.desktop
             chmod +x config/includes.chroot/etc/skel/Desktop/*.desktop
 
-            # 8. Mask tracker disk indexer
             ln -sf /dev/null config/includes.chroot/etc/systemd/user/tracker-miner-fs-3.service
 
-            # 9. Hook for 32-bit Wine & RustDesk
             mkdir -p config/hooks/live
-            cat << "EOF" > config/hooks/live/99-setup.hook.chroot
-            #!/bin/sh
-            set -e
-            export DEBIAN_FRONTEND=noninteractive
-            dpkg --add-architecture i386 || true
-            apt-get update -y || true
-            apt-get install -y --no-install-recommends wine32:i386 || true
-            curl -fsSL -o /tmp/rustdesk.deb "https://github.com/rustdesk/rustdesk/releases/download/1.2.3/rustdesk-1.2.3-x86_64.deb" || true
-            if [ -f /tmp/rustdesk.deb ]; then
-              apt-get install -y /tmp/rustdesk.deb || true
-              rm -f /tmp/rustdesk.deb
-            fi
-            EOF
+            printf "%s\n" \
+              "#!/bin/sh" \
+              "set -e" \
+              "export DEBIAN_FRONTEND=noninteractive" \
+              "dpkg --add-architecture i386 || true" \
+              "apt-get update -y || true" \
+              "apt-get install -y --no-install-recommends wine32:i386 || true" \
+              "curl -fsSL -o /tmp/rustdesk.deb \"https://github.com/rustdesk/rustdesk/releases/download/1.2.3/rustdesk-1.2.3-x86_64.deb\" || true" \
+              "if [ -f /tmp/rustdesk.deb ]; then apt-get install -y /tmp/rustdesk.deb || true; rm -f /tmp/rustdesk.deb; fi" > config/hooks/live/99-setup.hook.chroot
             chmod +x config/hooks/live/99-setup.hook.chroot
 
             # Build Universal Hybrid ISO
             lb build
+
+            # Copy finished ISO to workspace
             find . -maxdepth 2 -name "*.iso" -exec cp {} /workspace/os-installer.iso \;
           '
 
