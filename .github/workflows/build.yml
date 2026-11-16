@@ -102,18 +102,41 @@ jobs:
                      config/includes.chroot/usr/share/backgrounds \
                      config/includes.chroot/usr/share/images/desktop-base \
                      config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml \
-                     config/includes.chroot/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml
+                     config/includes.chroot/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml \
+                     config/includes.chroot/etc/xdg/xfce4/panel \
+                     config/includes.chroot/etc/gtk-3.0 \
+                     config/includes.chroot/etc/skel/.config/gtk-3.0
 
+            # 1. Download Theme, Icons, and Bliss directly into filesystem
             curl -fsSL -o config/includes.chroot/usr/share/backgrounds/bliss.jpg "https://upload.wikimedia.org/wikipedia/en/2/27/Bliss_%28Windows_XP%29.png" || true
             cp config/includes.chroot/usr/share/backgrounds/bliss.jpg config/includes.chroot/usr/share/images/desktop-base/default || true
 
             git clone --depth 1 https://github.com/B00merang-Project/Windows-XP.git config/includes.chroot/usr/share/themes/Windows-XP-Luna || true
             git clone --depth 1 https://github.com/B00merang-Artwork/Windows-XP.git config/includes.chroot/usr/share/icons/Windows-XP || true
 
+            # 2. Base64 Injection for 1:1 Windows XP Luna Panel, GTK Theme, Window Manager, and Desktop
+            # Panel XML (Single bottom taskbar with Green Start Button, Windows Tabs, System Tray)
+            echo "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPGNoYW5uZWwgbmFtZT0ieGZjZTQtcGFuZWwiIHZlcnNpb249IjEuMCI+CiAgPHByb3BlcnR5IG5hbWU9ImNvbmZpZy12ZXIiIHR5cGU9ImludCIgdmFsdWU9IjIiLz4KICA8cHJvcGVydHkgbmFtZT0icGFuZWxzIiB0eXBlPSJhcnJheSI+CiAgICA8dmFsdWUgdHlwZT0iaW50IiB2YWx1ZT0iMSIvPgogIDwvcHJvcGVydHk+CiAgPHByb3BlcnR5IG5hbWU9InBhbmVsLTEiIHR5cGU9ImVtcHR5Ij4KICAgIDxwcm9wZXJ0eSBuYW1lPSJwb3NpdGlvbiIgdHlwZT0ic3RyaW5nIiB2YWx1ZT0icD0xMjt4PTA7eT03MzgiLz4KICAgIDxwcm9wZXJ0eSBuYW1lPSJsZW5ndGgiIHR5cGU9InVpbnQiIHZhbHVlPSIxMDAiLz4KICAgIDxwcm9wZXJ0eSBuYW1lPSJwb3NpdGlvbi1sb2NrZWQiIHR5cGU9ImJvb2wiIHZhbHVlPSJ0cnVlIi8+CiAgICA8cHJvcGVydHkgbmFtZT0iaWNvbi1zaXplIiB0eXBlPSJ1aW50IiB2YWx1ZT0iMjAiLz4KICAgIDxwcm9wZXJ0eSBuYW1lPSJzaXplIiB0eXBlPSJ1aW50IiB2YWx1ZT0iMzAiLz4KICAgIDxwcm9wZXJ0eSBuYW1lPSJwbHVnaW4taWRzIiB0eXBlPSJhcnJheSI+CiAgICAgIDx2YWx1ZSB0eXBlPSJpbnQiIHZhbHVlPSIxIi8+CiAgICAgIDx2YWx1ZSB0eXBlPSJpbnQiIHZhbHVlPSIyIi8+CiAgICAgIDx2YWx1ZSB0eXBlPSJpbnQiIHZhbHVlPSIzIi8+CiAgICAgIDx2YWx1ZSB0eXBlPSJpbnQiIHZhbHVlPSI0Ii8+CiAgICAgIDx2YWx1ZSB0eXBlPSJpbnQiIHZhbHVlPSI1Ii8+CiAgICAgIDx2YWx1ZSB0eXBlPSJpbnQiIHZhbHVlPSI2Ii8+CiAgICAgIDx2YWx1ZSB0eXBlPSJpbnQiIHZhbHVlPSI3Ii8+CiAgICA8L3Byb3BlcnR5PgogIDwvcHJvcGVydHk+CiAgPHByb3BlcnR5IG5hbWU9InBsdWdpbnMiIHR5cGU9ImVtcHR5Ij4KICAgIDxwcm9wZXJ0eSBuYW1lPSJwbHVnaW4tMSIgdHlwZT0ic3RyaW5nIiB2YWx1ZT0id2hpc2tlcm1lbnUiPgogICAgICA8cHJvcGVydHkgbmFtZT0iYnV0dG9uLXRpdGxlIiB0eXBlPSJzdHJpbmciIHZhbHVlPSJTdGFydCIvPgogICAgICA8cHJvcGVydHkgbmFtZT0iYnV0dG9uLWljb24iIHR5cGU9InN0cmluZyIgdmFsdWU9InN0YXJ0LWhlcmUiLz4KICAgIDwvcHJvcGVydHk+CiAgICA8cHJvcGVydHkgbmFtZT0icGx1Z2luLTIiIHR5cGU9InN0cmluZyIgdmFsdWU9InRhc2tsaXN0Ij4KICAgICAgPHByb3BlcnR5IG5hbWU9Imdyb3VwaW5nIiB0eXBlPSJ1aW50IiB2YWx1ZT0iMSIvPgogICAgICA8cHJvcGVydHkgbmFtZT0iZmxhdC1idXR0b25zIiB0eXBlPSJib29sIiB2YWx1ZT0iZmFsc2UiLz4KICAgIDxwcm9wZXJ0eSBuYW1lPSJzaG93LWxhYmVscyIgdHlwZT0iYm9vbCIgdmFsdWU9InRydWUiLz4KICAgICAgPHByb3BlcnR5IG5hbWU9InNob3ctaGFuZGxlIiB0eXBlPSJib29sIiB2YWx1ZT0iZmFsc2UiLz4KICAgIDwvcHJvcGVydHk+CiAgICA8cHJvcGVydHkgbmFtZT0icGx1Z2luLTMiIHR5cGU9InN0cmluZyIgdmFsdWU9InNlcGFyYXRvciI+CiAgICAgIDxwcm9wZXJ0eSBuYW1lPSJleHBhbmQiIHR5cGU9ImJvb2wiIHZhbHVlPSJ0cnVlIi8+CiAgICAgIDxwcm9wZXJ0eSBuYW1lPSJzdHlsZSIgdHlwZT0idWludCIgdmFsdWU9IjAiLz4KICAgIDwvcHJvcGVydHk+CiAgICA8cHJvcGVydHkgbmFtZT0icGx1Z2luLTQiIHR5cGU9InN0cmluZyIgdmFsdWU9InN5c3RyYXkiPgogICAgICA8cHJvcGVydHkgbmFtZT0ic3F1YXJlLWljb25zIiB0eXBlPSJib29sIiB2YWx1ZT0idHJ1ZSIvPgogICAgPC9wcm9wZXJ0eT4KICAgIDxwcm9wZXJ0eSBuYW1lPSJwbHVnaW4tNSIgdHlwZT0ic3RyaW5nIiB2YWx1ZT0icHVsc2VhdWRpbyI+CiAgICA8cHJvcGVydHkgbmFtZT0icGx1Z2luLTYiIHR5cGU9InN0cmluZyIgdmFsdWU9ImNsb2NrIj4KICAgICAgPHByb3BlcnR5IG5hbWU9ImRpZ2l0YWwtbGF5b3V0IiB0eXBlPSJ1aW50IiB2YWx1ZT0iMyIvPgogICAgICA8cHJvcGVydHkgbmFtZT0iZGlnaXRhbC10aW1lLWZvcm1hdCIgdHlwZT0ic3RyaW5nIiB2YWx1ZT0iJWw6JU0gJXAiLz4KICAgIDwvcHJvcGVydHk+CiAgICA8cHJvcGVydHkgbmFtZT0icGx1Z2luLTciIHR5cGU9InN0cmluZyIgdmFsdWU9InNob3dkZXNrdG9wIi8+CiAgPC9wcm9wZXJ0eT4KPC9jaGFubmVsPg==" | base64 -d > config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
+            cp config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml config/includes.chroot/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
+            cp config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml config/includes.chroot/etc/xdg/xfce4/panel/default.xml
+
+            # GTK CSS: Windows XP Luna Royal Blue Taskbar & Green Start Button
+            echo "LyogV2luZG93cyBYUCBMdW5hIFJveWFsIEJsdWUgVGFza2JhciAmIEdyZWVuIFN0YXJ0IEJ1dHRvbiAqLwoueGZjZTQtcGFuZWwgewogICAgYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KHRvIGJvdHRvbSwgIzI0NWVkYiAwJSwgIzNmOGNmMyA5JSwgIzI0NWVkYiAxOCUsICMyNDVlZGIgOTIlLCAjMTk0MWE1IDEwMCUpICFpbXBvcnRhbnQ7CiAgICBib3JkZXItdG9wOiAxcHggc29saWQgIzM1ODhmZiAhaW1wb3J0YW50Owp9Cgojd2hpc2tlcm1lbnUtYnV0dG9uLCAueGZjZTQtcGFuZWwgYnV0dG9uI3doaXNrZXJtZW51LWJ1dHRvbiB7CiAgICBiYWNrZ3JvdW5kOiBsaW5lYXItZ3JhZGllbnQodG8gYm90dG9tLCAjMzg4ZTNjIDAlLCAjNGNhZjUwIDUwJSwgIzJlN2QzMiAxMDAlKSAhaW1wb3J0YW50OwogICAgY29sb3I6ICNmZmZmZmYgIWltcG9ydGFudDsKICAgIGZvbnQtd2VpZ2h0OiBib2xkICFpbXBvcnRhbnQ7CiAgICBmb250LXN0eWxlOiBpdGFsaWMgIWltcG9ydGFudDsKICAgIGZvbnQtc2l6ZTogMTNweCAhaW1wb3J0YW50OwogICAgYm9yZGVyLXJhZGl1czogMHB4IDhweCA4cHggMHB4ICFpbXBvcnRhbnQ7CiAgICBib3JkZXI6IDFweCBzb2xpZCAjMWI1ZTIwICFpbXBvcnRhbnQ7CiAgICBib3gtc2hhZG93OiBpbnNldCAwIDFweCAwICM4MWM3ODQgIWltcG9ydGFudDsKICAgIHBhZGRpbmctbGVmdDogOHB4ICFpbXBvcnRhbnQ7CiAgICBwYWRkaW5nLXJpZ2h0OiAxMnB4ICFpbXBvcnRhbnQ7Cn0KCiN3aGlza2VybWVudS1idXR0b246aG92ZXIgewogICAgYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KHRvIGJvdHRvbSwgIzQzYTA0NyAwJSwgIzY2YmI2YSA1MCUsICMzODhlM2MgMTAwJSkgIWltcG9ydGFudDsKfQoKLyogV2luZG93cyBYUCBUYXNrYmFyIFdpbmRvdyBUYWJzICovCi54ZmNlNC1wYW5lbCAudGFza2xpc3QgYnV0dG9uIHsKICAgIGJhY2tncm91bmQ6IGxpbmVhci1ncmFkaWVudCh0byBib3R0b20sICMzYzhlZmMgMCUsICMxYzYzZGIgNTAlLCAjMTU1NWMyIDEwMCUpICFpbXBvcnRhbnQ7CiAgICBib3JkZXI6IDFweCBzb2xpZCAjMGY0MTljICFpbXBvcnRhbnQ7CiAgICBib3JkZXItcmFkaXVzOiAzcHggIWltcG9ydGFudDsKICAgIGNvbG9yOiAjZmZmZmZmICFpbXBvcnRhbnQ7CiAgICBmb250LXNpemU6IDExcHggIWltcG9ydGFudDsKICAgIG1hcmdpbjogMnB4IDJweCAhaW1wb3J0YW50OwogICAgcGFkZGluZzogMCA4cHggIWltcG9ydGFudDsKICAgIGJveC1zaGFkb3c6IGluc2V0IDAgMXB4IDAgcmdiYSgyNTUsMjU1LDI1NSwwLjQpICFpbXBvcnRhbnQ7Cn0KCi54ZmNlNC1wYW5lbCAudGFza2xpc3QgYnV0dG9uOmNoZWNrZWQsIC54ZmNlNC1wYW5lbCAudGFza2xpc3QgYnV0dG9uOmFjdGl2ZSB7CiAgICBiYWNrZ3JvdW5kOiBsaW5lYXItZ3JhZGllbnQodG8gYm90dG9tLCAjMTY0YmI4IDAlLCAjMWE1NmNmIDUwJSwgIzI1NmRmMiAxMDAlKSAhaW1wb3J0YW50OwogICAgYm94LXNoYWRvdzogaW5zZXQgMCAxcHggM3B4IHJnYmEoMCwwLDAsMC40KSAhaW1wb3J0YW50Owp9CgovKiBTeXN0ZW0gVHJheSBOb3RpZmljYXRpb24gQXJlYSAqLwoueGZjZTQtcGFuZWwgI3N5c3RyYXktYm94LCAueGZjZTQtcGFuZWwgLnN5c3RyYXkgewogICAgYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KHRvIGJvdHRvbSwgIzBmNWJkOCAwJSwgIzE2NjRlOCAxMDAlKSAhaW1wb3J0YW50OwogICAgYm9yZGVyLWxlZnQ6IDFweCBzb2xpZCAjMGI0NWE2ICFpbXBvcnRhbnQ7CiAgICBib3gtc2hhZG93OiBpbnNldCAxcHggMCAwICMzYTgzZmYgIWltcG9ydGFudDsKfQ==" | base64 -d > config/includes.chroot/etc/gtk-3.0/gtk.css
+            cp config/includes.chroot/etc/gtk-3.0/gtk.css config/includes.chroot/etc/skel/.config/gtk-3.0/gtk.css
+
+            # Settings XML: Force Windows-XP-Luna GTK Theme & Windows-XP Icons
+            echo "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPGNoYW5uZWwgbmFtZT0ieHNldHRpbmdzIiB2ZXJzaW9uPSIxLjAiPgogIDxwcm9wZXJ0eSBuYW1lPSJOZXQiIHR5cGU9ImVtcHR5Ij4KICAgIDxwcm9wZXJ0eSBuYW1lPSJUaGVtZU5hbWUiIHR5cGU9InN0cmluZyIgdmFsdWU9IldpbmRvd3MtWFAtTHVuYSIvPgogICAgPHByb3BlcnR5IG5hbWU9Ikljb25UaGVtZU5hbWUiIHR5cGU9InN0cmluZyIgdmFsdWU9IldpbmRvd3MtWFAiLz4KICA8L3Byb3BlcnR5PgogIDxwcm9wZXJ0eSBuYW1lPSJHdGsiIHR5cGU9ImVtcHR5Ij4KICAgIDxwcm9wZXJ0eSBuYW1lPSJGb250TmFtZSIgdHlwZT0ic3RyaW5nIiB2YWx1ZT0iTGliZXJhdGlvbiBTYW5zIDkiLz4KICAgIDxwcm9wZXJ0eSBuYW1lPSJDdXJzb3JUaGVtZU5hbWUiIHR5cGU9InN0cmluZyIgdmFsdWU9IkRNWi1XaGl0ZSIvPgogICAgPHByb3BlcnR5IG5hbWU9IkRlY29yYXRpb25MYXlvdXQiIHR5cGU9InN0cmluZyIgdmFsdWU9Im1lbnU6bWluaW1pemUsbWF4aW1pemUsY2xvc2UiLz4KICA8L3Byb3BlcnR5Pgo8L2NoYW5uZWw+" | base64 -d > config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
+            cp config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml config/includes.chroot/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
+
+            # XFWM4 XML: Royal Blue Window Borders with Minimize/Maximize/Red Close Button
+            echo "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPGNoYW5uZWwgbmFtZT0ieGZ3bTQiIHZlcnNpb249IjEuMCI+CiAgPHByb3BlcnR5IG5hbWU9ImdlbmVyYWwiIHR5cGU9ImVtcHR5Ij4KICAgIDxwcm9wZXJ0eSBuYW1lPSJ0aGVtZSIgdHlwZT0ic3RyaW5nIiB2YWx1ZT0iV2luZG93cy1YUC1MdW5hIi8+CiAgICA8cHJvcGVydHkgbmFtZT0iYnV0dG9uX2xheW91dCIgdHlwZT0ic3RyaW5nIiB2YWx1ZT0iT3xITUMiLz4KICAgIDxwcm9wZXJ0eSBuYW1lPSJ0aXRsZV9hbGlnbm1lbnQiIHR5cGU9InN0cmluZyIgdmFsdWU9ImxlZnQiLz4KICAgIDxwcm9wZXJ0eSBuYW1lPSJ0aXRsZV9mb250IiB0eXBlPSJzdHJpbmciIHZhbHVlPSJMaWJlcmF0aW9uIFNhbnMgQm9sZCA5Ii8+CiAgPC9wcm9wZXJ0eT4KPC9jaGFubmVsPg==" | base64 -d > config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
+
+            # 3. Sysctl for 16GB RAM + HDD
             printf "%s\n" \
               "vm.swappiness = 10" \
               "vm.vfs_cache_pressure = 50" > config/includes.chroot/etc/sysctl.d/99-sysctl.conf
 
+            # 4. Polkit Zero-Password
             printf "%s\n" \
               "polkit.addRule(function(action, subject) {" \
               "    if (subject.local && subject.active) {" \
@@ -121,6 +144,7 @@ jobs:
               "    }" \
               "});" > config/includes.chroot/etc/polkit-1/rules.d/49-dad-nopasswd.rules
 
+            # 5. Wine OpenGL Launcher (Hardware Safe for Intel HD 3000)
             printf "%s\n" \
               "#!/bin/sh" \
               "export WINE_D3D_CONFIG=\"renderer=gl,csmt=1,max_gl_version=3.3\"" \
@@ -131,10 +155,12 @@ jobs:
               "esac" > config/includes.chroot/usr/bin/wine-runner
             chmod +x config/includes.chroot/usr/bin/wine-runner
 
+            # 6. Hide Terminals from Start Menu
             for app in xfce4-terminal debian-xterm debian-uxterm; do
               printf "%s\n" "[Desktop Entry]" "Type=Application" "NoDisplay=true" "Hidden=true" > config/includes.chroot/usr/share/applications/${app}.desktop
             done
 
+            # 7. Desktop Shortcuts
             printf "%s\n" "[Desktop Entry]" "Type=Application" "Name=My Computer" "Exec=thunar computer:///" "Icon=computer" > config/includes.chroot/etc/skel/Desktop/my-computer.desktop
             printf "%s\n" "[Desktop Entry]" "Type=Application" "Name=My Documents" "Exec=thunar Documents" "Icon=folder-documents" > config/includes.chroot/etc/skel/Desktop/my-documents.desktop
             printf "%s\n" "[Desktop Entry]" "Type=Application" "Name=Recycle Bin" "Exec=thunar trash:///" "Icon=user-trash" > config/includes.chroot/etc/skel/Desktop/recycle-bin.desktop
@@ -168,7 +194,7 @@ jobs:
         with:
           tag_name: v${{ github.run_number }}
           name: "Dad's OS (Windows XP Edition) Build #${{ github.run_number }}"
-          body: "High-speed direct download for Dad's OS. Fully supports both modern UEFI and classic Legacy MBR/BIOS."
+          body: "High-speed direct download for Dad's OS. Fully supports both modern UEFI and classic Legacy MBR/BIOS with full 1:1 Windows XP taskbar and Start button."
           files: os-installer.iso
           make_latest: true
         env:
