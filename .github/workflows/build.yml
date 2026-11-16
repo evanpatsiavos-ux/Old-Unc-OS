@@ -5,6 +5,9 @@ on:
   push:
     branches: [ main, master ]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Compile Universal Dual-Boot (UEFI + MBR) Debian 12 XP ISO
@@ -235,9 +238,12 @@ jobs:
             find . -maxdepth 2 -name "*.iso" -exec cp {} /workspace/os-installer.iso \;
           '
 
-      - name: Upload ISO for Download
-        uses: actions/upload-artifact@v4
+      - name: Publish High-Speed Direct ISO Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: DadOS-Windows-XP-ISO
-          path: os-installer.iso
-          retention-days: 7
+          tag_name: latest
+          name: "Dad's OS (Windows XP Edition) Direct ISO"
+          body: "High-speed direct download link for Dad's OS. Supports both UEFI and Legacy MBR/BIOS."
+          files: os-installer.iso
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
